@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div id="root" style="position:relative;width:400px;height:300px;border:1px solid #999;"></div>
+    <script>
+        const root = document.getElementById("root");
+        const N = 50;
+        const pool = [];
+        // 初期にN個作ってプール
+        for (let i = 0; i < N; i++) {
+            const el = document.createElement("div");
+            el.style.position = "absolute";
+            el.style.width = "5px"; el.style.height = "5px";
+            el.style.background = "red";
+            el.style.willChange = "transform";     // transform更新を最適化
+            root.appendChild(el);
+            pool.push(el);
+        }
+        function loop(t) {
+            for (let i = 0; i < N; i++) {
+                const x = (t / 10 + i * 8) % 400;
+                const y = 50 + (i * 5) % 200;
+                pool[i].style.transform = `translate(${x}px,${y}px)`;
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    </script>
+</body>
+
+</html>

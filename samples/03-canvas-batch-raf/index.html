@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <canvas id="cv" width="600" height="400" style="border:1px solid #999"></canvas>
+    <script>
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d", { alpha: false });
+
+        // ダミーデータを擬似的に「10Hzで更新」
+        let latest = null;
+        setInterval(() => {
+            const now = performance.now();
+            const entities = [];
+            for (let i = 0; i < 200; i++) {
+                const r = 120 + (i % 40);
+                const a = (now * 0.001 + i * 0.05);
+                const x = 300 + r * Math.cos(a);
+                const y = 200 + r * Math.sin(a);
+                entities.push({ x, y });
+            }
+            latest = { entities };
+        }, 100); // 10Hz
+
+        // rAFでバッチ描画（表示は100msスナップ）
+        let lastDraw = 0;
+        function draw() {
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            if (!latest) return;
+            ctx.fillStyle = "#0a7";
+            for (const e of latest.entities) {
+                ctx.fillRect(e.x, e.y, 3, 3);
+            }
+        }
+        function loop(ts) {
+            if (ts - lastDraw >= 100) { // 100msごとに最新を1回だけ描く
+                draw();
+                lastDraw = ts;
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    </script>
+</body>
+
+</html>
